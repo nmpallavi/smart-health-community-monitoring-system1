@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Worker - Reports</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/seed.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/charts.js"></script>
+</head>
+<body>
+<div class="header"><h2>Worker — Villager Reports</h2></div>
+<div class="container">
+    <div class="card">
+        <div style="display:flex;justify-content:space-between">
+            <div><strong id="wname"></strong></div>
+            <div>
+                <a href="worker_dashboard.html"><button class="btn">Home</button></a>
+                <button class="btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        <hr>
+
+        <h3>Reports</h3>
+        <div id="reportsList"></div>
+
+        <hr>
+       <h3>Risk Distribution</h3>
+      <div class="chart-center" style="height:300px;">
+     <canvas id="riskChart"></canvas>
+</div>
+
+    </div>
+</div>
+
+<script>
+// Normalize area names
+function normalize(area) {
+    if (!area) return "";
+    area = area.trim().toLowerCase();
+    if (area === "n") return "north";
+    if (area === "s") return "south";
+    if (area === "e") return "east";
+    if (area === "w") return "west";
+    return area.replace("village", "").trim();
+}
+
+function sameVillage(a, b) {
+    return normalize(a) === normalize(b);
+}
+
+// Protect Worker Page
+(function protect() {
+    const active = JSON.parse(localStorage.getItem("activeWorker") || "null");
+    if (!active) {
+        alert("Please login as a health worker.");
+        window.location.href = "worker_login.html";
+    } else {
+        document.getElementById("wname").innerText = active.name + " — " + active.area;
+        loadReports();
+    }
+})();
+
+// ⭐ Update Report Status
+function updateStatus(id, newStatus) {
+    const reports = getData("villager_reports");
+    const index = reports.findIndex(r => r.id === id);
+    if (index !== -1) {
+        reports[index].status = newStatus;
+        saveData("villager_reports", reports);
+        loadReports(); // refresh UI
+    }
+}
+
+// Load Reports
+function loadReports() {
+    const reports = getData("villager_reports");
+    const active = JSON.parse(localStorage.getItem("activeWorker"));
+    const visible = reports.filter(r => sameVillage(r.area || "", active.area || ""));
+
+    const cont = document.getElementById("reportsList");
+    cont.innerHTML = "";
+    if (visible.length === 0) cont.innerHTML = "<p>No reports from your area yet.</p>";
+
+    visible.forEach(r => {
+        const d = document.createElement("div");
+        d.style.border = "1px solid #eee";
+        d.style.padding = "10px";
+        d.style.borderRadius = "8px";
+        d.style.marginBottom = "8px";
+
+        d.innerHTML = `
+            <strong>${r.user}</strong> (${r.date}) — <b>${r.risk}</b><br>
+            Water Quality: ${r.symptoms.water_quality}<br>
+            Area: ${r.area || "N/A"}<br>
+            <b>Status:</b> ${r.status || "Pending"}<br><br>
+
+            <!-- ⭐ NEW: STATUS BUTTONS -->
+            <button class="btn" onclick="updateStatus(${r.id}, 'In Progress')">In Progress</button>
+            <button class="btn" style="background:#28a745" onclick="updateStatus(${r.id}, 'Solved')">Solved</button>
+            <button class="btn" style="background:#dc3545" onclick="updateStatus(${r.id}, 'Rejected')">Reject</button>
+        `;
+
+        cont.appendChild(d);
+    });
+
+    const ctx = document.getElementById("riskChart").getContext("2d");
+    drawRiskChart(ctx, visible);
+}
+
+function goBack() { window.location.href = "worker_water_check.html"; }
+function logout() {
+    localStorage.removeItem("activeWorker");
+    window.location.href = "../index.html";
+}
+function updateStatus(id, status) {
+    const msg = prompt("Enter message for villager:");
+
+    updateReportStatus(id, status, msg);
+
+    alert("Status Updated Successfully!");
+    location.reload();
+}
+function renderRiskChart() {
+    let reports = JSON.parse(localStorage.getItem("villager_reports")) || [];
+
+    // Count correct risk categories
+    let high = reports.filter(r => r.risk.toLowerCase().includes("high")).length;
+    let medium = reports.filter(r => r.risk.toLowerCase().includes("medium")).length;
+    let low = reports.filter(r => r.risk.toLowerCase().includes("low")).length;
+
+    const ctx = document.getElementById("riskChart").getContext("2d");
+
+    new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: ["High", "Medium", "Low"],
+            datasets: [{
+                data: [high, medium, low],
+                backgroundColor: [
+                    "red",    // High
+                    "orange", // Medium
+                    "green"   // Low
+                ]
+            }]
+        }
+    });
+}
+
+
+</script>
+</body>
+</html>

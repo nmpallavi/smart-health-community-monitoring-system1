@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Symptoms</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/storage.js"></script>
+    <script src="../js/ml_model.js"></script>
+</head>
+<body>
+
+<div class="header"><h2>Enter Symptoms</h2></div>
+
+<div class="container">
+    <div class="card">
+
+        <label><input type="checkbox" id="fever"> Fever</label><br>
+        <label><input type="checkbox" id="vomiting"> Vomiting</label><br>
+        <label><input type="checkbox" id="diarrhea"> Diarrhea</label><br>
+        <label><input type="checkbox" id="watery_stool"> Watery Stool</label><br>
+
+        <input class="input-box" id="area" placeholder="Enter your area / village name">
+
+        <label>Water Quality:</label>
+        <select class="input-box" id="water_quality">
+            <option value="good">Good</option>
+            <option value="bad">Bad / Smelly</option>
+        </select>
+
+        <button class="btn" onclick="submitSymptoms()">Submit</button>
+        <a href="villager_reports.html"><button class="btn">View Report</button></a>
+        <a href="villager_dashboard.html"><button class="btn">Home</button></a>
+
+    </div>
+</div>
+
+<script>
+
+// Normalize area to avoid spelling issues
+function normalizeArea(area) {
+    if (!area) return "unknown";
+    area = area.trim().toLowerCase();
+
+    if (area === "n") return "north";
+    if (area === "s") return "south";
+    if (area === "e") return "east";
+    if (area === "w") return "west";
+
+    area = area.replace("village", "").replace("area", "").trim();
+
+    if (area.includes("north")) return "north";
+    if (area.includes("south")) return "south";
+    if (area.includes("east")) return "east";
+    if (area.includes("west")) return "west";
+
+    return area;
+}
+
+function submitSymptoms() {
+    const symptoms = {
+        fever: fever.checked,
+        vomiting: vomiting.checked,
+        diarrhea: diarrhea.checked,
+        watery_stool: watery_stool.checked,
+        water_quality: water_quality.value
+    };
+
+    const result = predictDisease(symptoms);
+
+    const active = JSON.parse(localStorage.getItem("activeVillager") || "null");
+
+    let rawArea = document.getElementById("area").value || (active ? active.area : "unknown");
+
+    const area = normalizeArea(rawArea);
+
+    // ✅ FIXED — NOW EACH REPORT HAS UNIQUE ID
+    addRecord("villager_reports", {
+        id: generateId(),                 // <-- IMPORTANT FIX
+        user: active ? active.name : "Unknown",
+        date: new Date().toLocaleString(),
+        symptoms: symptoms,
+        risk: result,
+        area: area,
+        status: "Pending",
+        message: ""
+    });
+
+    localStorage.setItem("villagerResult", result);
+    window.location.href = "villager_result.html";
+}
+
+</script>
+
+</body>
+</html>

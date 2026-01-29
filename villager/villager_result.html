@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="header"><h2>Prediction Result</h2></div>
+
+<div class="container">
+    <div class="card">
+        <h2 id="result"></h2>
+
+        <!-- ⭐ NEW: STATUS DISPLAY AREA -->
+        <h3 id="statusBox" style="margin-top: 20px; color: #007BFF;"></h3>
+
+        <a href="villager_dashboard.html"><button class="btn">Home</button></a>
+        <a href="../index.html"><button class="btn">Logout</button></a>
+        
+    </div>
+</div>
+
+<script>
+// Existing ML Result text
+document.getElementById("result").innerText =
+    "Your Health Risk Level: " + localStorage.getItem("villagerResult");
+
+// ⭐ NEW CODE → Load Status Using Report ID
+const params = new URLSearchParams(window.location.search);
+const id = Number(params.get("id"));  // Example: villager_result.html?id=1234
+
+const reports = JSON.parse(localStorage.getItem("reports")) || [];
+const report = reports.find(r => r.id === id);
+
+if (report) {
+    let msg = "";
+
+    if (report.status === "Solved") {
+        msg = "✅ Your Issue Has Been Solved!";
+    } 
+    else if (report.status === "In Progress") {
+        msg = "⏳ Your case is being handled by a health worker.";
+    } 
+    else if (report.status === "Rejected") {
+        msg = "❌ Your report was rejected. Please re-check symptoms.";
+    }
+    else {
+        msg = "⌛ Your report is pending review.";
+    }
+
+    document.getElementById("statusBox").innerText = "Report Status: " + report.status + "\n" + msg;
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Health Awareness</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #cce0ff, #e6f2ff);
+            min-height: 100vh;
+        }
+
+        /* Header container */
+        #header {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        /* Page content */
+        .container {
+            max-width: 700px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            text-align: center;
+            margin: 140px auto 50px; /* pushes content below header */
+            animation: fadeInUp 1s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { color: #007BFF; margin-bottom: 20px; }
+        p { font-size: 16px; margin-bottom: 20px; }
+
+        .contacts { text-align: left; margin-top: 20px; }
+        .contacts h2 { color: #28a745; margin-bottom: 10px; font-size: 18px; }
+        .contacts ul { list-style: none; padding-left: 0; }
+        .contacts li {
+            margin-bottom: 10px;
+            font-size: 15px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .contacts li:hover { background-color: #d1f0d1; transform: translateX(5px); }
+
+        .footer-message {
+            margin-top: 30px;
+            font-style: italic;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 🔹 HEADER WILL LOAD HERE -->
+    <div id="header"></div>
+
+    <div class="container">
+        <h1>About Our Project</h1>
+        <p>Welcome to our Smart Community Health Monitoring System!<br>
+        Feel free to browse our page and report any symptoms or suspected cases of water-borne diseases.<br>
+        Our team of health workers is always ready to help you.</p>
+
+        <div class="contacts">
+            <h2>Contact Health Workers:</h2>
+            <ul>
+                <li>Dr. Rajesh Kumar - +91 9876543210</li>
+                <li>Nurse Anjali Sharma - +91 9123456780</li>
+                <li>Health Worker Suresh - +91 9988776655</li>
+                <li>Health Worker Priya - +91 9871234560</li>
+            </ul>
+        </div>
+
+        <div class="footer-message">
+            💡 Stay safe, stay healthy! Early reporting helps prevent outbreaks.
+        </div>
+    </div>
+
+    <!-- 🔹 LOAD HEADER FILE -->
+    <script>
+        fetch('header.html')
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('header').innerHTML = data;
+        });
+    </script>
+
+</body>
+</html>

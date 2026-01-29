@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home UI</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background-color: #e0e7ff;
+        }
+
+        /* Header container */
+        #header {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin-top: 100px; /* Push below header */
+        }
+
+        .hero-box {
+            width: 75%;
+            max-width: 850px;
+            background: white;
+            padding: 50px 40px;
+            border-radius: 18px;
+            box-shadow: 0px 8px 35px rgba(0,0,0,0.15);
+            text-align: center;
+            animation: fadeIn 1.3s ease;
+        }
+
+        .hero-box h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .hero-box p {
+            margin-top: 12px;
+            color: #444;
+        }
+
+        .btn-success {
+            display: inline-block;
+            background-color: #33cc66;
+            padding: 12px 28px;
+            border-radius: 30px;
+            margin-top: 25px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.05rem;
+            transition: 0.3s;
+        }
+
+        .btn-success:hover {
+            background-color: #28a745;
+            transform: translateY(-3px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+            padding: 40px 0;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .col-md-4 {
+            background: white;
+            width: 30%;
+            min-width: 260px;
+            padding: 18px;
+            margin: 12px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .col-md-4:hover {
+            transform: translateY(-8px);
+        }
+
+        .col-md-4 h3 {
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+
+        .bg-light {
+            background: #eef6ff;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .bg-light h2 {
+            color: #1976d2;
+            font-size: 2rem;
+        }
+
+        .bg-light p {
+            width: 70%;
+            margin: auto;
+            margin-top: 10px;
+            color: #444;
+        }
+    </style>
+
+</head>
+<body>
+
+<!-- 🔹 HEADER LOADED HERE -->
+<div id="header"></div>
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-box">
+        <h1>Smart Community Health Monitoring System</h1>
+        <p>Early Warning and Awareness Platform for Water-Borne Diseases</p>
+        <a href="roles.html" class="btn-success">Get Started</a>
+    </div>
+</section>
+
+<!-- INFO SECTION -->
+<section class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h3>📊 Real-Time Monitoring</h3>
+            <p>Track disease spread in real-time across villages.</p>
+        </div>
+
+        <div class="col-md-4">
+            <h3>💧 Water Safety</h3>
+            <p>Detect early signs of water contamination.</p>
+        </div>
+
+        <div class="col-md-4">
+            <h3>🤝 Community Participation</h3>
+            <p>Villagers can report symptoms and water issues.</p>
+        </div>
+    </div>
+</section>
+
+<!-- MISSION SECTION -->
+<section class="bg-light">
+    <h2>Our Mission</h2>
+    <p>To empower rural communities through clean water initiatives and early disease detection using AI & monitoring tools.</p>
+</section>
+
+<!-- 🔹 LOAD HEADER FILE USING JS (LIKE ABOUT PAGE) -->
+<script>
+    fetch('header.html')
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById('header').innerHTML = data;
+    });
+</script>
+
+</body>
+</html>

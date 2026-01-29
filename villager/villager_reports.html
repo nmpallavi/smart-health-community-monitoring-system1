@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Reports</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/storage.js"></script>
+</head>
+<body>
+
+<div class="header"><h2>Your Submitted Reports</h2></div>
+
+<div class="container">
+    <div class="card">
+
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong id="vname"></strong>
+            <div>
+                 <a href="villager_dashboard.html"><button class="btn">Home</button></a>
+                <button class="btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <hr>
+        <h3>Your Reports</h3>
+
+        <div id="reportList"></div>
+
+    </div>
+</div>
+
+<script>
+// Protect Villager Page
+(function protect() {
+    const active = JSON.parse(localStorage.getItem("activeVillager") || "null");
+    if (!active) {
+        alert("Please login as villager.");
+        window.location.href = "villager_login.html";
+    } else {
+        document.getElementById("vname").innerText = active.name + " — " + active.area;
+        loadReports();
+    }
+})();
+
+// Delete solved report
+ function deleteReport(id) {
+    let reports = getData("villager_reports");
+    reports = reports.filter(r => r.id !== id);
+    saveData("villager_reports", reports);
+    loadReports();
+}
+
+
+// Load reports
+function loadReports() {
+    const active = JSON.parse(localStorage.getItem("activeVillager"));
+    const reports = getData("villager_reports");
+
+    const myReports = reports.filter(r => r.user === active.name);
+
+    const cont = document.getElementById("reportList");
+    cont.innerHTML = "";
+
+    if (myReports.length === 0) {
+        cont.innerHTML = "<p>You have not submitted any reports yet.</p>";
+        return;
+    }
+
+    myReports.forEach(r => {
+        const msg = r.worker_message ? r.worker_message : "No message";
+
+        const box = document.createElement("div");
+        box.style.border = "1px solid #ddd";
+        box.style.padding = "12px";
+        box.style.borderRadius = "8px";
+        box.style.marginBottom = "10px";
+
+        box.innerHTML = `
+            <strong>${r.date}</strong><br>
+            Risk Level: <b>${r.risk}</b><br>
+            Water Quality: ${r.symptoms.water_quality}<br>
+            Area: ${r.area}<br>
+            <b>Status:</b> ${r.status || "Pending"}<br>
+            <b>Message from worker:</b> ${msg}<br><br>
+
+            ${r.status === "Solved" ? 
+                `<button class='btn' style='background:#d9534f' onclick='deleteReport(${r.id})'>
+                    Delete Report
+                 </button>` : "" }
+        `;
+
+        cont.appendChild(box);
+    });
+}
+
+function goBack() { window.location.href = "villager_symptoms.html"; }
+
+function logout() {
+    localStorage.removeItem("activeVillager");
+    window.location.href = "../index.html";
+}
+</script>
+
+</body>
+</html>

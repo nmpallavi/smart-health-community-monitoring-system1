@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Villager Alerts</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(135deg, #dfe9ff, #f7faff);
+            margin: 0;
+            padding: 30px;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header{
+            width:100%;
+            background:rgb(255, 255, 255);
+            padding:15px px;
+            display:flex;
+            justify-content:space-around;
+            align-items:center;
+            border-radius:5px;
+            margin-bottom:25px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.12);
+            animation: fadeDown 0.8s ease;
+        }
+
+        @keyframes fadeDown{
+            from{transform:translateY(-35px); opacity:0;}
+            to{transform:translateY(0); opacity:1;}
+        }
+
+        .logo{
+            font-size:28px;
+            font-weight:700;
+            color:#2d3e50;
+            text-shadow:0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        nav a{
+            margin-left:25px;
+            text-decoration:none;
+            color:#2d3e50;
+            font-weight:600;
+            transition:0.3s;
+        }
+
+        nav a:hover{
+            color:#4A90E2;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 25px;
+            color: #2d3e50;
+            animation: popIn 0.8s ease-in-out;
+        }
+
+        /* Title animation */
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #alertList {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .alert-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 18px 20px;
+            border-radius: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+
+            border: 3px solid transparent;
+            background-image:
+                linear-gradient(white, white),
+                linear-gradient(135deg, #4A90E2, #6dd5ed, #4A90E2);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            animation: fadeSlideUp 0.7s forwards;
+        }
+
+        @keyframes fadeSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .alert-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            transition: 0.4s ease;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+        }
+
+        .alert-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1f2e40;
+            margin-bottom: 6px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .alert-details {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 10px;
+            animation: subtlePulse 2s infinite ease-in-out;
+        }
+
+        @keyframes subtlePulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .alert-message {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.8;
+            padding-left: 5px;
+        }
+
+        .no-alert {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 40px;
+            color: #777;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+
+</head>
+<body>
+
+<header>
+    <div class="logo">Smart Health</div>
+    <nav>
+        <a href="villager_dashboard.html">Home</a>
+        <a href="../index.html">Logout</a>
+    </nav>
+</header>
+
+<h2>🚨 Latest Alerts for Villagers</h2>
+
+<div id="alertList"></div>
+
+<script>
+function loadAlerts() {
+    let alerts = JSON.parse(localStorage.getItem("admin_alerts")) || [];
+    let container = document.getElementById("alertList");
+
+    if (alerts.length === 0) {
+        container.innerHTML = "<p class='no-alert'>No alerts available</p>";
+        return;
+    }
+
+    let html = "";
+    alerts.slice().reverse().forEach((a, index) => {
+        html += `
+            <div class="alert-card" style="animation-delay:${index * 0.12}s">
+                <div class="alert-title">${a.title}</div>
+                <div class="alert-details">${a.date} — <strong>${a.by}</strong></div>
+                <div class="alert-message">${a.message}</div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+loadAlerts();
+</script>
+
+</body>
+</html>

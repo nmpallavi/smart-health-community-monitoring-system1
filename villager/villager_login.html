@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Villager Login</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/storage.js"></script>
+</head>
+<body>
+
+<div class="header"><h2>Villager Login</h2></div>
+
+<div class="container">
+    <div class="card">
+
+        <input class="input-box" id="name" placeholder="Name">
+        <input class="input-box" id="password" placeholder="Password" type="password">
+
+        <button class="btn" onclick="login()">Login</button>
+
+        <!-- Register Message -->
+        <p style="margin-top: 15px; text-align:center;">
+            Don't have an account?
+            <a href="villager_register.html" style="color: blue; text-decoration: underline;">
+                Register here
+            </a>
+        </p>
+
+    </div>
+</div>
+
+<script>
+function login() {
+    let list = getData("villagers");
+    let name = document.getElementById("name").value;
+    let pass = document.getElementById("password").value;
+
+    let found = list.find(u => u.name === name && u.password === pass);
+
+    if (found) {
+        localStorage.setItem("activeVillager", JSON.stringify(found));
+        window.location.href = "villager_dashboard.html";
+    } else {
+        alert("Incorrect login");
+    }
+}
+</script>
+
+</body>
+</html>

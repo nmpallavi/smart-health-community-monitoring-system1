@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Alerts</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/seed.js"></script>
+    <script src="../js/storage.js"></script>
+</head>
+<body>
+<div class="header"><h2>Admin — Alerts</h2></div>
+<div class="container">
+    <div class="card">
+        <div style="display:flex;justify-content:space-between">
+            <div><strong id="adminName"></strong></div>
+            <div>
+                <button class="btn" onclick="back()">Back</button>
+                <button class="btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <hr>
+        <h3>Create Alert</h3>
+        <input class="input-box" id="alertTitle" placeholder="Title">
+        <textarea class="input-box" id="alertMsg" placeholder="Message"></textarea>
+        <button class="btn" onclick="createAlert()">Create Alert</button>
+
+        <hr>
+        <h3>Existing Alerts</h3>
+        <div id="alertsList"></div>
+
+    </div>
+</div>
+
+<script>
+(function protect() {
+    const active = JSON.parse(localStorage.getItem("activeAdmin") || "null");
+    if (!active) {
+        alert("Please login as admin.");
+        window.location.href = "admin_login.html";
+    } else {
+        document.getElementById("adminName").innerText = active.name;
+        loadAlerts();
+    }
+})();
+
+function createAlert() {
+    const title = document.getElementById("alertTitle").value.trim();
+    const msg = document.getElementById("alertMsg").value.trim();
+    if (!title || !msg) { alert("Enter title and message"); return; }
+
+    const alerts = getData("admin_alerts");
+    const active = JSON.parse(localStorage.getItem("activeAdmin"));
+
+    alerts.push({
+        id: Date.now(),
+        title,
+        message: msg,
+        date: new Date().toLocaleString(),
+        by: active.name
+    });
+
+    saveData("admin_alerts", alerts);
+    alert("Alert created and visible to workers & villagers.");
+
+    document.getElementById("alertTitle").value = "";
+    document.getElementById("alertMsg").value = "";
+
+    loadAlerts();
+}
+
+function loadAlerts() {
+    const alerts = getData("admin_alerts");
+    const cont = document.getElementById("alertsList");
+    cont.innerHTML = "";
+
+    if (alerts.length === 0) cont.innerHTML = "<p>No alerts yet.</p>";
+
+    alerts.slice().reverse().forEach(a => {
+        const d = document.createElement("div");
+        d.style.border = "1px solid #eee";
+        d.style.padding = "10px";
+        d.style.borderRadius = "8px";
+        d.style.marginBottom = "8px";
+
+        d.innerHTML = `
+            <strong>${a.title}</strong>
+            — <small>${a.date} by ${a.by}</small>
+            <p>${a.message}</p>
+            <button class="btn" onclick="deleteAlert(${a.id})">Delete</button>
+        `;
+
+        cont.appendChild(d);
+    });
+}
+
+function deleteAlert(id) {
+    let alerts = getData("admin_alerts");
+    alerts = alerts.filter(a => a.id !== id);
+    saveData("admin_alerts", alerts);
+    loadAlerts();
+}
+
+function back() { window.location.href = "admin_dashboard.html"; }
+
+function logout() {
+    localStorage.removeItem("activeAdmin");
+    window.location.href = "../index.html";
+}
+</script>
+
+</body>
+</html>

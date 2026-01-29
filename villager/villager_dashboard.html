@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Villager Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/storage.js"></script>
+    <script src="../js/seed.js"></script>
+</head>
+<body>
+
+<div class="header"><h2>Villager Dashboard</h2></div>
+
+<div class="container">
+    <div class="card">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong id="vname"></strong>
+            <button class="btn" onclick="logout()">Logout</button>
+        </div>
+
+        <hr>
+
+        <h3>Welcome!</h3>
+        <p>You can report symptoms or check your past reports.</p>
+
+        <button class="btn" onclick="goToSymptoms()">Report Symptoms</button>
+        <button class="btn" onclick="goToReports()">View My Reports</button>
+        <a href="villager_alerts.html"><button class="btn">Alerts</button></a>
+
+        <hr>
+
+        <h3>Health Tips</h3>
+        <ul>
+            <li>Drink clean and boiled water</li>
+            <li>Keep surroundings clean</li>
+            <li>Avoid using contaminated water sources</li>
+            <li>Report issues immediately to health workers</li>
+        </ul>
+
+    </div>
+</div>
+
+<script>
+// Protect Page
+(function protect() {
+    const active = JSON.parse(localStorage.getItem("activeVillager") || "null");
+    if (!active) {
+        alert("Please login as villager.");
+        window.location.href = "villager_login.html";
+    } else {
+        document.getElementById("vname").innerText = active.name;
+    }
+})();
+
+function goToSymptoms() {
+    window.location.href = "villager_symptoms.html";
+}
+
+function goToReports() {
+    window.location.href = "villager_reports.html";
+}
+
+function logout() {
+    localStorage.removeItem("activeVillager");
+    window.location.href = "../index.html";
+}
+</script>
+
+</body>
+</html>

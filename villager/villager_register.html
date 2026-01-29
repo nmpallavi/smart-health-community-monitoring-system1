@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Villager Register</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/storage.js"></script>
+</head>
+<body>
+
+<div class="header"><h2>Villager Registration</h2></div>
+
+<div class="container">
+    <div class="card">
+
+        <input class="input-box" id="name" placeholder="Enter Name">
+        <input class="input-box" id="village" placeholder="Village Name">
+        <input class="input-box" id="password" placeholder="Password" type="password">
+
+        <button class="btn" onclick="register()">Register</button>
+
+    </div>
+</div>
+
+<script>
+function register() {
+    let user = {
+        name: document.getElementById("name").value,
+        village: document.getElementById("village").value,
+        password: document.getElementById("password").value
+    };
+
+    addRecord("villagers", user);
+    alert("Registration successful");
+    window.location.href = "villager_login.html";
+}
+</script>
+
+</body>
+</html>

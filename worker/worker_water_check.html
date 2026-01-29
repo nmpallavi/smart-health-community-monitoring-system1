@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Worker - Water Check</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/seed.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/charts.js"></script>
+</head>
+<body>
+<div class="header"><h2>Worker Dashboard — Water Sources</h2></div>
+<div class="container">
+    <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong id="workerName"></strong> — <span id="workerArea"></span></div>
+            <div>
+                <button class="btn" onclick="goToReports()">View Reports</button>
+                <button class="btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        <hr>
+
+        <div id="sourcesList"></div>
+        <hr>
+        <h3>Water Status Chart</h3>
+        <div style="height:300px;">
+            <canvas id="waterStatusChart"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        </div>
+    </div>
+</div>
+
+<script>
+// ↓↓↓ Added for case-insensitive matching
+function sameVillage(a, b) {
+    return a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
+(function protect() {
+    const active = JSON.parse(localStorage.getItem("activeWorker") || "null");
+    if (!active) {
+        alert("Please login as a health worker.");
+        window.location.href = "worker_login.html";
+    } else {
+        document.getElementById("workerName").innerText = active.name;
+        document.getElementById("workerArea").innerText = active.area;
+        loadSources();
+    }
+})();
+
+function loadSources() {
+    const active = JSON.parse(localStorage.getItem("activeWorker"));
+    const src = getData("water_sources");
+
+    // ↓↓↓ SHOW ONLY sources from that worker's area (case insensitive)
+    const visibleSources = src.filter(s => sameVillage(s.area, active.area));
+
+    const cont = document.getElementById("sourcesList");
+    cont.innerHTML = "";
+    visibleSources.forEach(s => {
+        const div = document.createElement("div");
+        div.style.padding = "10px";
+        div.style.border = "1px solid #eee";
+        div.style.borderRadius = "8px";
+        div.style.marginBottom = "10px";
+        div.innerHTML = `
+            <strong>${s.name}</strong> <small>(${s.area})</small><br>
+            Status: <b id="st-${s.id}">${s.status || "Unknown"}</b> — Last Checked: ${s.lastChecked || "Never"}<br>
+            <select id="sel-${s.id}" class="input-box" style="width:60%;display:inline-block;margin-top:8px">
+                <option value="Safe">Safe</option>
+                <option value="Unsafe">Unsafe</option>
+                <option value="Unknown">Unknown</option>
+            </select>
+            <button class="btn" onclick="updateSource(${s.id})">Update</button>
+        `;
+        cont.appendChild(div);
+    });
+
+    const ctx = document.getElementById("waterStatusChart").getContext("2d");
+    drawWaterStatusChart(ctx, visibleSources);
+}
+
+function updateSource(id) {
+    const sel = document.getElementById(`sel-${id}`);
+    const val = sel.value;
+    let sources = getData("water_sources");
+    const idx = sources.findIndex(s => s.id === id);
+    const active = JSON.parse(localStorage.getItem("activeWorker"));
+    if (idx > -1) {
+        sources[idx].status = val;
+        sources[idx].lastChecked = new Date().toLocaleString();
+        sources[idx].checkedBy = active.name;
+        saveData("water_sources", sources);
+        alert("Updated");
+        loadSources();
+    }
+}
+
+function goToReports() {
+    window.location.href = "worker_reports.html";
+}
+
+function logout() {
+    localStorage.removeItem("activeWorker");
+    window.location.href = "../index.html";
+}
+</script>
+</body>
+</html>

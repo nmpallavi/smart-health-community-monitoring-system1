@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/seed.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/charts.js"></script>
+</head>
+<body>
+<div class="header"><h2>Admin Dashboard</h2></div>
+<div class="container">
+    <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong id="adminName"></strong></div>
+            <div>
+                <button class="btn" onclick="goToAlerts()">Manage Alerts</button>
+                <button class="btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <hr>
+        <h3>Community Overview</h3>
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+            <div style="flex:1;min-width:300px" class="card">
+                <h4>Total Reports</h4>
+                <div id="totalReports" style="font-size:28px;"></div>
+            </div>
+
+            <div style="flex:1;min-width:300px" class="card">
+                <h4>Risk Distribution</h4>
+                <div style="height:260px;"><canvas id="adminRiskChart"></canvas></div>
+            </div>
+
+            <!-- ❌ WATER SOURCES STATUS REMOVED -->
+
+            <div style="flex:1;min-width:300px" class="card">
+                <h4>Area-wise Water Status</h4>
+                <div style="height:260px;"><canvas id="adminAreaWaterChart"></canvas></div>
+            </div>
+        </div>
+
+        <hr>
+        <h3>Latest Reports</h3>
+        <div id="latestList"></div>
+
+    </div>
+</div>
+
+<script>
+(function protect() {
+    const active = JSON.parse(localStorage.getItem("activeAdmin") || "null");
+    if (!active) {
+        alert("Please login as admin.");
+        window.location.href = "admin_login.html";
+    } else {
+        document.getElementById("adminName").innerText = active.name;
+        loadOverview();
+    }
+})();
+
+function loadOverview() {
+    const reports = getData("villager_reports");
+    document.getElementById("totalReports").innerText = reports.length;
+
+    // risk chart
+    const ctx = document.getElementById("adminRiskChart").getContext("2d");
+    drawRiskChart(ctx, reports);
+
+    // ❌ REMOVED WATER SOURCE CHART CODE
+
+    // area-wise chart
+    const src = getData("water_sources");
+    const ctx3 = document.getElementById("adminAreaWaterChart").getContext("2d");
+    drawAreaWiseWaterChart(ctx3, src);
+
+    // latest reports
+    const latest = reports.slice().reverse().slice(0, 8);
+    const cont = document.getElementById("latestList");
+    cont.innerHTML = "";
+    latest.forEach(r => {
+        const d = document.createElement("div");
+        d.style.border = "1px solid #eee";
+        d.style.padding = "8px";
+        d.style.borderRadius = "6px";
+        d.style.marginBottom = "6px";
+        d.innerHTML = `<strong>${r.user}</strong> (${r.date}) — <b>${r.risk}</b> — Area: ${r.area || "N/A"}`;
+        cont.appendChild(d);
+    });
+}
+
+function goToAlerts() { window.location.href = "admin_alerts.html"; }
+function logout() {
+    localStorage.removeItem("activeAdmin");
+    window.location.href = "../index.html";
+}
+</script>
+</body>
+</html>
