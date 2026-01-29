@@ -1,26 +1,33 @@
 # Smart Health Community Monitoring System
 
 ## Description
-This project is designed to monitor community health data and provide useful insights
-for better healthcare management.
+This mini project is designed to monitor community health conditions and
+support better healthcare management by collecting and analyzing data from
+villagers and health workers.
 
-## Features
-- User registration and login
-- Health data monitoring
-- Community health analysis
-- Reports and alerts
+## Modules
+- Villager Module
+  - Symptom reporting
+- Worker Module
+  - Login
+  - Dashboard
+  - Reports
+  - Alerts
+  - Water quality check
 
 ## Technologies Used
 - HTML
 - CSS
 - JavaScript
-- Python / PHP (edit as per your project)
-- MySQL
+
+## Project Structure
+- index.html – Home page
+- worker/ – Worker-related pages
+- villager/ – Villager-related pages
 
 ## How to Run
-1. Clone the repository
-2. Install required dependencies
-3. Run the application
+1. Download or clone the repository
+2. Open `index.html` in a web browser
 
 ## Author
 Pallavi
